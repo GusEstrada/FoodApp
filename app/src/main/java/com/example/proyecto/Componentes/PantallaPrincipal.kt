@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
@@ -15,15 +17,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.proyecto.Data.categoriaslist
 import com.example.proyecto.Data.restauranteslist
 import com.example.proyecto.Data.comidasEjemplolist
+import com.example.proyecto.Models.Categoria
 import com.example.proyecto.Models.Comida
+import com.example.proyecto.Models.Restaurante
 import com.example.proyecto.ui.theme.ProyectoTheme
+import com.example.proyecto.R
 
 @Composable
 fun PantallaPrincipal(nombreUsuario: String) {
@@ -53,8 +61,8 @@ fun PantallaPrincipal(nombreUsuario: String) {
             fontWeight = FontWeight.Bold
         )
         LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(8.dp)) {
-            items(comidasEjemplolist.size) { index ->
-                TarjetaComida(comida = comidasEjemplolist[index])
+            items(comidasEjemplolist) { comida ->
+                TarjetaComida(comida = comida)
             }
         }
     }
@@ -99,33 +107,80 @@ fun BarraSuperior(nombreUsuario: String) {
 }
 
 @Composable
-fun ListaCategorias() {
-    LazyRow(modifier = Modifier.padding(horizontal = 8.dp)) {
-        items(categoriaslist.size) { index ->
-            Text(
-                text = categoriaslist[index].nombre,
+fun TarjetaCategoria(categoria: Categoria) {
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .width(100.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .clip(CircleShape)
+                .background(Color.Red),
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                model = categoria.image,
+                contentDescription = categoria.nombre,
                 modifier = Modifier
-                    .padding(8.dp)
-                    .background(Color(0xFFE0E0E0))
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
-                fontWeight = FontWeight.Medium
+                    .size(60.dp)
+                    .clip(CircleShape),
+                placeholder = painterResource(R.drawable.ic_launcher_background),
+                contentScale = ContentScale.Crop
             )
         }
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = categoria.nombre,
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.sp
+        )
+    }
+}
+
+@Composable
+fun ListaCategorias() {
+    LazyRow(modifier = Modifier.padding(horizontal = 8.dp)) {
+        items(categoriaslist) { categoria ->
+            TarjetaCategoria(categoria = categoria)
+        }
+    }
+}
+
+@Composable
+fun TarjetaRestaurante(restaurante: Restaurante) {
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .width(140.dp)
+            .clip(MaterialTheme.shapes.medium)
+
+    ) {
+        AsyncImage(
+            model = restaurante.image,
+            contentDescription = restaurante.nombre,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            placeholder = painterResource(R.drawable.ic_launcher_background),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = restaurante.nombre,
+            modifier = Modifier.padding(8.dp),
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 
 @Composable
 fun ListaRestaurantes() {
     LazyRow(modifier = Modifier.padding(horizontal = 8.dp)) {
-        items(restauranteslist.size) { index ->
-            Text(
-                text = restauranteslist[index].nombre,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .background(Color(0xFFD1C4E9))
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
-                fontWeight = FontWeight.Medium
-            )
+        items(restauranteslist) { restaurante ->
+            TarjetaRestaurante(restaurante = restaurante)
         }
     }
 }
@@ -135,14 +190,26 @@ fun TarjetaComida(comida: Comida) {
     Box(
         modifier = Modifier
             .padding(8.dp)
-            .height(140.dp)
+            .height(180.dp)
             .clip(MaterialTheme.shapes.medium)
-            .background(Color.LightGray)
+
             .fillMaxWidth()
     ) {
-        Column(modifier = Modifier.align(Alignment.Center)) {
-            Text(text = comida.nombre, fontWeight = FontWeight.Bold)
-            Text(text = "⭐ ${comida.calificacion} - \$${comida.precio}")
+        Column(modifier = Modifier.fillMaxSize()) {
+            AsyncImage(
+                model = comida.image,
+                contentDescription = comida.nombre,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp),
+                placeholder = painterResource(R.drawable.ic_launcher_background),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Column(modifier = Modifier.padding(horizontal = 8.dp)) {
+                Text(text = comida.nombre, fontWeight = FontWeight.Bold)
+                Text(text = "⭐ ${comida.calificacion} - \$${comida.precio}")
+            }
         }
     }
 }
