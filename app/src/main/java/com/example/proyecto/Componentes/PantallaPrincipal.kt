@@ -3,6 +3,8 @@ package com.example.proyecto.Componentes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
@@ -19,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.proyecto.Data.categoriaslist
 import com.example.proyecto.Data.restauranteslist
+import com.example.proyecto.Data.comidasEjemplolist
+import com.example.proyecto.Models.Comida
 import com.example.proyecto.ui.theme.ProyectoTheme
 
 @Composable
@@ -41,6 +45,18 @@ fun PantallaPrincipal(nombreUsuario: String) {
             fontWeight = FontWeight.Bold
         )
         ListaRestaurantes()
+
+        Text(
+            text = "COMIDAS RECOMENDADAS",
+            modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
+        )
+        LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(8.dp)) {
+            items(comidasEjemplolist.size) { index ->
+                TarjetaComida(comida = comidasEjemplolist[index])
+            }
+        }
     }
 }
 
@@ -58,7 +74,7 @@ fun BarraSuperior(nombreUsuario: String) {
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFFF9800)) // naranja
+                    .background(Color(0xFFFF9800))
             ) {
                 Icon(
                     imageVector = Icons.Default.Person,
@@ -110,6 +126,23 @@ fun ListaRestaurantes() {
                     .padding(horizontal = 12.dp, vertical = 6.dp),
                 fontWeight = FontWeight.Medium
             )
+        }
+    }
+}
+
+@Composable
+fun TarjetaComida(comida: Comida) {
+    Box(
+        modifier = Modifier
+            .padding(8.dp)
+            .height(140.dp)
+            .clip(MaterialTheme.shapes.medium)
+            .background(Color.LightGray)
+            .fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.align(Alignment.Center)) {
+            Text(text = comida.nombre, fontWeight = FontWeight.Bold)
+            Text(text = "⭐ ${comida.calificacion} - \$${comida.precio}")
         }
     }
 }
